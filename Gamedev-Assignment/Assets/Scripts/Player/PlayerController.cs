@@ -14,11 +14,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private ParticleSystem sprayPainter;
 
     private Camera cam;
+
+    [SerializeField] private GameObject squidPrefab;
+
+    public bool squidMode;
+
+    [SerializeField] private CameraController camController;
     
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
         cam = Camera.main;
+        squidMode = false;
     }
 
     private void Update()
@@ -39,6 +46,11 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(1))
         {
             ColorIdentifier();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            SquidModeToggle(squidMode);
         }
     }
 
@@ -70,6 +82,24 @@ public class PlayerController : MonoBehaviour
                 Destroy(tempTex);
             }
         }
+    }
+
+    private void SquidModeToggle(bool squidStatus)
+    {
+        if (squidStatus)
+        {
+            squidPrefab.SetActive(false);
+            camController.minAngle = -90f;
+            camController.maxAngle = 90f;
+        }
+        else
+        {
+            squidPrefab.SetActive(true);
+            camController.minAngle = 0f;
+            camController.maxAngle = 20f;
+        }
+
+        squidMode = !squidStatus;
     }
     
 }
