@@ -1,4 +1,4 @@
-﻿Shader "TNTC/ExtendIslands"{
+﻿ Shader "TNTC/ExtendIslands"{
     Properties{
         _MainTex ("Texture", 2D) = "white" {}
         _UVIslands ("Texture UVIsalnds", 2D) = "white" {}

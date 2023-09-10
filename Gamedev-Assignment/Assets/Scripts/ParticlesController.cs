@@ -11,6 +11,7 @@ public class ParticlesController: MonoBehaviour{
     public float hardness = 1;
     [Space]
     ParticleSystem part;
+    
     List<ParticleCollisionEvent> collisionEvents;
 
     void Start(){
@@ -22,6 +23,8 @@ public class ParticlesController: MonoBehaviour{
     }
 
     void OnParticleCollision(GameObject other) {
+        Debug.Log("hitting");
+        
         int numCollisionEvents = part.GetCollisionEvents(other, collisionEvents);
 
         Paintable p = other.GetComponent<Paintable>();
