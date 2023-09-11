@@ -11,10 +11,14 @@ public class ParticlesController: MonoBehaviour{
     public float hardness = 1;
     [Space]
     ParticleSystem part;
+
+    [SerializeField] private bool showDebugging;
     
     List<ParticleCollisionEvent> collisionEvents;
 
-    void Start(){
+    void Start()
+    {
+        showDebugging = false;
         part = GetComponent<ParticleSystem>();
         collisionEvents = new List<ParticleCollisionEvent>();
         //var pr = part.GetComponent<ParticleSystemRenderer>();
@@ -23,6 +27,11 @@ public class ParticlesController: MonoBehaviour{
     }
 
     void OnParticleCollision(GameObject other) {
+
+        if (showDebugging)
+        {
+            Debug.Log("hitting");
+        }
         
         int numCollisionEvents = part.GetCollisionEvents(other, collisionEvents);
 
@@ -30,6 +39,11 @@ public class ParticlesController: MonoBehaviour{
         
         if(hitObject.GetComponent<Paintable>() != null){
             Paintable p = hitObject.GetComponent<Paintable>();
+            
+            if (showDebugging)
+            {
+                Debug.Log("painting");
+            }
             
             for  (int i = 0; i< numCollisionEvents; i++){
                 Vector3 pos = collisionEvents[i].intersection;
