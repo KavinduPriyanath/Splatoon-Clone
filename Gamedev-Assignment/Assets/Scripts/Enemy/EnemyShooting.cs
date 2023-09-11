@@ -25,9 +25,8 @@ public class EnemyShooting: MonoBehaviour{
 
     void OnParticleCollision(GameObject other) {
         
-        Debug.Log("hitting");
         int numCollisionEvents = part.GetCollisionEvents(other, collisionEvents);
-        
+        Debug.Log(numCollisionEvents);
         
         if(other.gameObject.CompareTag("Player")){
             

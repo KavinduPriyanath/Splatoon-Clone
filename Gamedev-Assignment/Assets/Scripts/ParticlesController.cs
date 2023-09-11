@@ -37,9 +37,5 @@ public class ParticlesController: MonoBehaviour{
                 PaintManager.instance.paint(p, pos, radius, hardness, strength, paintColor);
             }
         }
-        else if(hitObject.CompareTag("Player"))
-        {
-            Debug.Log("Player");
-        }
     }
 }
