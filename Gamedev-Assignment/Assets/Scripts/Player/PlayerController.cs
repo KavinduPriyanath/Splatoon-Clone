@@ -82,7 +82,19 @@ public class PlayerController : MonoBehaviour
                 RenderTexture.active = null;
 
                 // Now you have the color of the surface at the hit point
-                Debug.Log("Color: " + color);
+                //Debug.Log("Color: " + color);
+
+                float red = color.r;
+                float green = color.g;
+                float blue = color.b;
+
+                if ((red >= 0.3f && red <= 0.4f) && (green >= 0.8f && green <= 0.9f) && (blue >= 0.1f && blue <= 0.2f))
+                {
+                    Debug.Log("Enemy Color");
+                } else if ((red >= 0.9f && red <= 1f) && (green >= 0.2f && green <= 0.3f) && (blue >= 0.4f && blue <= 0.5f))
+                {
+                    Debug.Log("Player Color");
+                }
 
                 // Clean up the temporary Texture2D
                 Destroy(tempTex);
