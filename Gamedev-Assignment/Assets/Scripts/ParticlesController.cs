@@ -23,17 +23,23 @@ public class ParticlesController: MonoBehaviour{
     }
 
     void OnParticleCollision(GameObject other) {
-        Debug.Log("hitting");
         
         int numCollisionEvents = part.GetCollisionEvents(other, collisionEvents);
 
-        Paintable p = other.GetComponent<Paintable>();
-        if(p != null){
+        GameObject hitObject = other.gameObject;
+        
+        if(hitObject.GetComponent<Paintable>() != null){
+            Paintable p = hitObject.GetComponent<Paintable>();
+            
             for  (int i = 0; i< numCollisionEvents; i++){
                 Vector3 pos = collisionEvents[i].intersection;
                 float radius = Random.Range(minRadius, maxRadius);
                 PaintManager.instance.paint(p, pos, radius, hardness, strength, paintColor);
             }
+        }
+        else if(hitObject.CompareTag("Player"))
+        {
+            Debug.Log("Player");
         }
     }
 }

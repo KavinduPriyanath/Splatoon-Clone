@@ -16,7 +16,8 @@ public class PlayerController : MonoBehaviour
     private Camera cam;
 
     [SerializeField] private GameObject squidPrefab;
-
+    [SerializeField] private List<GameObject> playerGraphics;
+    
     public bool squidMode;
 
     [SerializeField] private CameraController camController;
@@ -86,15 +87,18 @@ public class PlayerController : MonoBehaviour
 
     private void SquidModeToggle(bool squidStatus)
     {
+        //Todo - Needs to adjust the camera when diving into squid mode
         if (squidStatus)
         {
             squidPrefab.SetActive(false);
+            playerGraphics.ForEach(graphic => graphic.SetActive(true));
             camController.minAngle = -90f;
             camController.maxAngle = 90f;
         }
         else
         {
             squidPrefab.SetActive(true);
+            playerGraphics.ForEach(graphic => graphic.SetActive(false));
             camController.minAngle = 0f;
             camController.maxAngle = 20f;
         }
