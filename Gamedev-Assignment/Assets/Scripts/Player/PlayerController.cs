@@ -21,12 +21,17 @@ public class PlayerController : MonoBehaviour
     public bool squidMode;
 
     [SerializeField] private CameraController camController;
+
+    [SerializeField] private int paintCapacity;
+    [SerializeField] private float jumpForce;
+    private bool _isGrounded;
     
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
         cam = Camera.main;
         squidMode = false;
+        _isGrounded = true;
     }
 
     private void Update()
@@ -36,13 +41,7 @@ public class PlayerController : MonoBehaviour
 
         _rb.velocity = (transform.forward * z) + (transform.right * x) + (transform.up * _rb.velocity.y);
         
-        if (Input.GetMouseButtonDown(0))
-        {
-            sprayPainter.Play();
-        } else if (Input.GetMouseButtonUp(0))
-        {
-            sprayPainter.Stop();
-        }
+        Shoot();
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -52,6 +51,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             SquidModeToggle(squidMode);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Space) && _isGrounded)
+        {
+            _rb.AddForce(new Vector3(0,jumpForce,0), ForceMode.Impulse);
+            _isGrounded = false;
         }
     }
 
@@ -105,5 +110,36 @@ public class PlayerController : MonoBehaviour
 
         squidMode = !squidStatus;
     }
-    
+
+    private void Shoot()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (paintCapacity <= 0)
+            {
+                Debug.Log("Ran out of ink");
+                return;
+            }
+            sprayPainter.Play();
+        } else if (Input.GetMouseButton(0))
+        {
+            if (paintCapacity <= 0)
+            {
+                Debug.Log("Ran out of ink");
+                return;
+            }
+            paintCapacity -= 1;
+        } else if (Input.GetMouseButtonUp(0))
+        {
+            sprayPainter.Stop();
+        }
+    }
+
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            _isGrounded = true;
+        }
+    }
 }
