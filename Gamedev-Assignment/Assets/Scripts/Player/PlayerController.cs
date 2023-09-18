@@ -72,8 +72,13 @@ public class PlayerController : MonoBehaviour
             _rb.AddForce(new Vector3(0,jumpForce,0), ForceMode.Impulse);
             _isGrounded = false;
         }
-        
+
+        SquidPaintDetection();
+
         PaintDetection();
+  
+        
+        
     }
 
     /*
@@ -197,6 +202,12 @@ public class PlayerController : MonoBehaviour
                 } else if ((red >= 0.9f && red <= 1f) && (green >= 0.2f && green <= 0.3f) && (blue >= 0.4f && blue <= 0.5f))
                 {
                     Debug.Log("Player Color");
+                    paintCapacity += 10;
+                    if (paintCapacity >= 1000)
+                    {
+                        paintCapacity = 1000;
+                        return;
+                    }
                 }
 
                 // Clean up the temporary Texture2D
