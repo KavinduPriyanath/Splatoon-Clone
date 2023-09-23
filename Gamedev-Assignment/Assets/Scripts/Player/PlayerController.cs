@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private ParticleSystem sprayPainter;
 
-    private Camera cam;
+    private Camera mainCamera;
 
     [SerializeField] private GameObject squidPrefab;
     [SerializeField] private GameObject squidPaintDetection;
@@ -34,13 +35,30 @@ public class PlayerController : MonoBehaviour
     public float healthPoints;
 
     [SerializeField] private Animator movingAnimation;
+
+    [SerializeField] private Slider refillMeter;
+    [SerializeField] private Gradient gradientImage;
+    [SerializeField] private Image fillImage;
+
+    private Vector3 camOriginalPosition;
+    private Quaternion camOriginalRotation;
+
+    [SerializeField] private GameObject targetCamPosition;
+
+    [SerializeField] private SquidController squidController;
     
-    private void Start()
+    private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
-        cam = Camera.main;
+        mainCamera = Camera.main;
+    }
+
+    private void Start()
+    {
+        camOriginalPosition = mainCamera.transform.position;
         squidMode = false;
         _isGrounded = true;
+        refillMeter.value = 1000;
     }
 
     private void Update()
@@ -65,6 +83,15 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             SquidModeToggle(squidMode);
+        } else if (Input.GetKeyUp(KeyCode.Z))
+        {
+            SquidModeToggle(squidMode);
+        }
+
+        if (squidController.squidHit)
+        {
+            SquidModeToggle(squidMode);
+            squidController.squidHit = false;
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && _isGrounded)
@@ -203,6 +230,9 @@ public class PlayerController : MonoBehaviour
                 {
                     Debug.Log("Player Color");
                     paintCapacity += 10;
+                    refillMeter.value += 10;
+                    fillImage.color = gradientImage.Evaluate(refillMeter.normalizedValue);
+                    
                     if (paintCapacity >= 1000)
                     {
                         paintCapacity = 1000;
@@ -216,22 +246,27 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void SquidModeToggle(bool squidStatus)
+    public void SquidModeToggle(bool squidStatus)
     {
         //Todo - Needs to adjust the camera when diving into squid mode
         if (squidStatus)
         {
             squidPrefab.SetActive(false);
             playerGraphics.ForEach(graphic => graphic.SetActive(true));
-            camController.minAngle = -90f;
-            camController.maxAngle = 90f;
+            camController.minAngle = -50f;
+            camController.maxAngle = 50f;
+            mainCamera.transform.localPosition = new Vector3(0f, 1.004f, 0f);
         }
         else
         {
             squidPrefab.SetActive(true);
             playerGraphics.ForEach(graphic => graphic.SetActive(false));
             camController.minAngle = 0f;
-            camController.maxAngle = 20f;
+            camController.maxAngle = 5f;
+            mainCamera.transform.position = Vector3.Lerp(Camera.main.transform.position,
+                targetCamPosition.transform.position, 100 * Time.deltaTime);
+            mainCamera.transform.position = targetCamPosition.transform.position;
+            
         }
 
         squidMode = !squidStatus;
@@ -255,6 +290,8 @@ public class PlayerController : MonoBehaviour
                 return;
             }
             paintCapacity -= 1;
+            refillMeter.value = paintCapacity;
+            fillImage.color = gradientImage.Evaluate(refillMeter.normalizedValue);
         } else if (Input.GetMouseButtonUp(0))
         {
             sprayPainter.Stop();
