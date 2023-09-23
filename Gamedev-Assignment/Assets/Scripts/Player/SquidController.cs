@@ -12,9 +12,12 @@ public class SquidController : MonoBehaviour
         squidHit = false;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision other)
     {
-        Debug.Log("hittt");
-        squidHit = true;
+        if (other.collider.CompareTag("Obstacle"))
+        {
+            Debug.Log("hittt");
+            squidHit = true;
+        }
     }
 }
