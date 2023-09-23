@@ -83,7 +83,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Z))
         {
             SquidModeToggle(squidMode);
-        } else if (Input.GetKeyUp(KeyCode.Z))
+        } else if (Input.GetKeyUp(KeyCode.Z) && squidMode == true)
         {
             SquidModeToggle(squidMode);
         }
@@ -199,7 +199,7 @@ public class PlayerController : MonoBehaviour
     {
         Ray ray = new Ray(squidPaintDetection.transform.position, Vector3.down);
         RaycastHit hit;
-
+        
         if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
         {
             Paintable p = hit.collider.GetComponent<Paintable>();
