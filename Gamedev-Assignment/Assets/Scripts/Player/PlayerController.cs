@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private GameObject squidPrefab;
     [SerializeField] private GameObject squidPaintDetection;
+    [SerializeField] private GameObject refillTank;
     
     [SerializeField] private List<GameObject> playerGraphics;
     
@@ -49,12 +50,13 @@ public class PlayerController : MonoBehaviour
     
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody>();
+        
         mainCamera = Camera.main;
     }
 
     private void Start()
     {
+        _rb = GetComponent<Rigidbody>();
         camOriginalPosition = mainCamera.transform.position;
         squidMode = false;
         _isGrounded = true;
@@ -101,7 +103,10 @@ public class PlayerController : MonoBehaviour
             _isGrounded = false;
         }
 
-        SquidPaintDetection();
+        if (squidPrefab.activeSelf)
+        {
+            SquidPaintDetection();
+        }
 
         PaintDetection();
   
@@ -182,11 +187,11 @@ public class PlayerController : MonoBehaviour
 
                 if ((red >= 0.3f && red <= 0.4f) && (green >= 0.8f && green <= 0.9f) && (blue >= 0.1f && blue <= 0.2f))
                 {
-                    Debug.Log("Enemy Color");
+                    //Debug.Log("Enemy Color");
                     healthPoints = (healthPoints > 0f) ? healthPoints - 0.25f :  0f;
                 } else if ((red >= 0.9f && red <= 1f) && (green >= 0.2f && green <= 0.3f) && (blue >= 0.4f && blue <= 0.5f))
                 {
-                    Debug.Log("Player Color");
+                    //Debug.Log("Player Color");
                 }
 
                 // Clean up the temporary Texture2D
@@ -205,6 +210,7 @@ public class PlayerController : MonoBehaviour
             Paintable p = hit.collider.GetComponent<Paintable>();
             if (p != null)
             {
+                
                 Vector2 uv = hit.textureCoord;
                 RenderTexture renderTexture = p.getMask();
 
@@ -253,6 +259,7 @@ public class PlayerController : MonoBehaviour
         if (squidStatus)
         {
             squidPrefab.SetActive(false);
+            refillTank.SetActive(false);
             playerGraphics.ForEach(graphic => graphic.SetActive(true));
             camController.minAngle = -50f;
             camController.maxAngle = 50f;
@@ -261,6 +268,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             squidPrefab.SetActive(true);
+            refillTank.SetActive(true);
             playerGraphics.ForEach(graphic => graphic.SetActive(false));
             camController.minAngle = 0f;
             camController.maxAngle = 5f;

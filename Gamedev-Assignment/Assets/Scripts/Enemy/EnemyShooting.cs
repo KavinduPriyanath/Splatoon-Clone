@@ -35,9 +35,10 @@ public class EnemyShooting: MonoBehaviour{
         if(other.gameObject.CompareTag("Player")){
             
             for  (int i = 0; i< numCollisionEvents; i++){
-                Debug.Log("hitting");
+                Debug.Log("hitting player");
                 player.healthPoints = (player.healthPoints > 0f) ? player.healthPoints - 0.5f : 0f;
             }
         }
+
     }
 }

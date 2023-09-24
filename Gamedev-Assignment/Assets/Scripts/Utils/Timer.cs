@@ -9,7 +9,7 @@ public class Timer : MonoBehaviour
     private TMP_Text countdownText;
 
     private float currentTime;
-    private float initialTime = 60f; // 5 minutes in seconds
+    private float initialTime = 300f; // 5 minutes in seconds
 
     private void Start()
     {
