@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
+using UnityEngine.UI;
 
 public class EnemyController : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class EnemyController : MonoBehaviour
 
     public LayerMask whatIsGround, whatIsPlayer;
 
+    public int enemyHealth;
+    [SerializeField] private Slider healthSlider;
+    
     //public float health;
 
     //Patroling
@@ -39,6 +43,8 @@ public class EnemyController : MonoBehaviour
     
     private void Start()
     {
+        enemyHealth = 100;
+        healthSlider.value = 100;
         shootingEffect.Play();
     }
 
@@ -51,6 +57,8 @@ public class EnemyController : MonoBehaviour
         if (!playerInSightRange && !playerInAttackRange) Patroling();
         if (playerInSightRange && !playerInAttackRange) ChasePlayer();
         //if (playerInAttackRange && playerInSightRange) AttackPlayer();
+
+        healthSlider.value = enemyHealth;
     }
 
     private void Patroling()

@@ -27,11 +27,6 @@ public class ParticlesController: MonoBehaviour{
     }
 
     void OnParticleCollision(GameObject other) {
-
-        if (showDebugging)
-        {
-            Debug.Log("hitting");
-        }
         
         int numCollisionEvents = part.GetCollisionEvents(other, collisionEvents);
 
