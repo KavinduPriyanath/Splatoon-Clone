@@ -12,7 +12,6 @@ public class PaintedPercentage : MonoBehaviour
     public bool calculate;
 
     [SerializeField] private List<Paintable> paintSurfaces;
-    [SerializeField] private List<float> paintPercentages;
 
     private Dictionary<Paintable, float> paintSurfaceDictionary = new Dictionary<Paintable, float>();
 
@@ -34,8 +33,6 @@ public class PaintedPercentage : MonoBehaviour
 
     private void CalculatePercentage()
     {
-        
-        
         foreach (Paintable paintSurface in paintSurfaces)
         {
             if (paintSurface != null)

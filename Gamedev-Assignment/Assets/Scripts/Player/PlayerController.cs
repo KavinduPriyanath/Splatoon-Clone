@@ -47,6 +47,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject targetCamPosition;
 
     [SerializeField] private SquidController squidController;
+
+    [SerializeField] private Slider healthBar;
     
     private void Awake()
     {
@@ -61,6 +63,7 @@ public class PlayerController : MonoBehaviour
         squidMode = false;
         _isGrounded = true;
         refillMeter.value = 1000;
+        healthBar.value = 100;
     }
 
     private void Update()
@@ -107,6 +110,12 @@ public class PlayerController : MonoBehaviour
         {
             SquidPaintDetection();
         }
+
+        if (healthPoints > 0)
+        {
+            healthBar.value = healthPoints;
+        }
+        
 
         PaintDetection();
   
