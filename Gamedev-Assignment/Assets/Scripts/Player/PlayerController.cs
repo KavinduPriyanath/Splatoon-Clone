@@ -49,6 +49,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SquidController squidController;
 
     [SerializeField] private Slider healthBar;
+
+    public int lidCount;
+
+    [SerializeField] private GameObject crossHair;
+    private GameObject currentHitObject;
     
     private void Awake()
     {
@@ -85,10 +90,10 @@ public class PlayerController : MonoBehaviour
             ColorIdentifier();
         }*/
 
-        if (Input.GetKeyDown(KeyCode.Z))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             SquidModeToggle(squidMode);
-        } else if (Input.GetKeyUp(KeyCode.Z) && squidMode == true)
+        } else if (Input.GetKeyUp(KeyCode.Q) && squidMode == true)
         {
             SquidModeToggle(squidMode);
         }
@@ -114,6 +119,19 @@ public class PlayerController : MonoBehaviour
         if (healthPoints > 0)
         {
             healthBar.value = healthPoints;
+        }
+
+        if (Input.GetMouseButton(1))
+        {
+            crossHair.SetActive(true);
+            LidPlacement();
+        } else if (Input.GetMouseButtonUp(1))
+        {
+            crossHair.SetActive(false);
+            if (currentHitObject != null)
+            {
+                currentHitObject.GetComponent<MeshRenderer>().enabled = false;
+            }
         }
         
 
@@ -316,6 +334,41 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void LidPlacement()
+    {
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider.CompareTag("Placement"))
+            {
+                MeshRenderer meshRenderer = hit.collider.GetComponent<MeshRenderer>();
+                meshRenderer.enabled = true;
+                currentHitObject = hit.collider.gameObject;
+
+                if (Input.GetKeyDown(KeyCode.T) && lidCount > 0)
+                {
+                    Transform pipeObject = hit.transform.parent;
+                    GameObject pipeSpray = pipeObject.Find("Spray Point").gameObject;
+                    GameObject pipeCover = pipeObject.Find("Pipe Cover").gameObject;
+                    //Todo - play a particle effect at pipe, and effect on lid UI
+                    pipeSpray.SetActive(false);
+                    pipeCover.SetActive(true);
+                    currentHitObject.SetActive(false);
+                    lidCount -= 1;
+                }
+            }
+
+            if (currentHitObject != hit.collider.gameObject)
+            {
+                if (currentHitObject != null)
+                {
+                    currentHitObject.GetComponent<MeshRenderer>().enabled = false;
+                }
+            }
+        }
+    }
+    
     private void OnCollisionEnter(Collision other)
     {
         if (other.gameObject.CompareTag("Ground"))
