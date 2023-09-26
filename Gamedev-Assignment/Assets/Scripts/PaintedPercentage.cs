@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using TMPro;
+using Unity.Collections;
+using Unity.Jobs;
 
 public class PaintedPercentage : MonoBehaviour
 {
@@ -11,12 +13,13 @@ public class PaintedPercentage : MonoBehaviour
     //[SerializeField] private Paintable paintSurface;
     public bool calculate;
 
-    [SerializeField] private List<Paintable> paintSurfaces;
+    public List<Paintable> paintSurfaces;
 
     private Dictionary<Paintable, float> paintSurfaceDictionary = new Dictionary<Paintable, float>();
 
     [SerializeField] private TMP_Text percentageText;
 
+    [SerializeField] private int percentage;
     private void Start()
     {
         //Adding the list's surfaces into the dictionary
@@ -29,6 +32,7 @@ public class PaintedPercentage : MonoBehaviour
     private void Update()
     {
         CalculatePercentage();
+
     }
 
     private void CalculatePercentage()
