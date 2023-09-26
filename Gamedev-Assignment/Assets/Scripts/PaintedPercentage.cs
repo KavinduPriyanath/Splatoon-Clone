@@ -6,6 +6,7 @@ using System.Linq;
 using TMPro;
 using Unity.Collections;
 using Unity.Jobs;
+using System.Threading.Tasks;
 
 public class PaintedPercentage : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class PaintedPercentage : MonoBehaviour
 
     private void Update()
     {
+        //await Task.Run(() => CalculatePercentage());
         CalculatePercentage();
 
     }
@@ -69,9 +71,12 @@ public class PaintedPercentage : MonoBehaviour
 
                 float percentage = (float)matchingPixelCount / (float)(width * height) * 100f;
                 paintSurfaceDictionary[paintSurface] = percentage;
+                //await Task.Delay(1000);
+                //yield return new WaitForSeconds(2f);
             }
         }
 
+        
         float total = 0f;
         foreach (float value in paintSurfaceDictionary.Values)
         {
