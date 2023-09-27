@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Training : MonoBehaviour
 {
@@ -41,12 +42,23 @@ public class Training : MonoBehaviour
     public bool squidMode;
     [SerializeField] private GameObject targetCamPosition;
     
+    [SerializeField] private LayerMask groundLayer;
+
+    public float healthPoints;
+    [SerializeField] private Slider refillMeter;
+    [SerializeField] private Gradient gradientImage;
+    [SerializeField] private Image fillImage;
+
+    [SerializeField] private GameObject paintMarks;
+    
     private void Start()
     {
         instructions[0].SetActive(true);
         canMove = false;
         _isGrounded = true;
         mainCamera = Camera.main;
+
+        StartCoroutine(HidePipes());
     }
 
     private void Update()
@@ -146,6 +158,11 @@ public class Training : MonoBehaviour
         {
             SquidModeToggle(squidMode);
         }
+        
+        if (squidPrefab.activeSelf)
+        {
+            SquidPaintDetection();
+        }
     }
 
     private void Move()
@@ -199,6 +216,61 @@ public class Training : MonoBehaviour
         }
     }
     
+    
+        private void SquidPaintDetection()
+    {
+        Ray ray = new Ray(squidPaintDetection.transform.position, Vector3.down);
+        RaycastHit hit;
+        
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, groundLayer))
+        {
+            Paintable p = hit.collider.GetComponent<Paintable>();
+            if (p != null)
+            {
+                
+                Vector2 uv = hit.textureCoord;
+                RenderTexture renderTexture = p.getMask();
+
+                // Read the color from the RenderTexture using a temporary Texture2D
+                Texture2D tempTex = new Texture2D(renderTexture.width, renderTexture.height);
+                RenderTexture.active = renderTexture;
+                tempTex.ReadPixels(new Rect(0, 0, renderTexture.width, renderTexture.height), 0, 0);
+                tempTex.Apply();
+                Color color = tempTex.GetPixelBilinear(uv.x, uv.y);
+                RenderTexture.active = null;
+
+                // Now you have the color of the surface at the hit point
+                //Debug.Log("Color: " + color);
+
+                float red = color.r;
+                float green = color.g;
+                float blue = color.b;
+
+                if ((red >= 0.3f && red <= 0.4f) && (green >= 0.8f && green <= 0.9f) && (blue >= 0.1f && blue <= 0.2f))
+                {
+                    Debug.Log("Enemy Color");
+                    healthPoints = (healthPoints > 0f) ? healthPoints - 0.25f :  0f;
+                } else if ((red >= 0.9f && red <= 1f) && (green >= 0.2f && green <= 0.3f) && (blue >= 0.4f && blue <= 0.5f))
+                {
+                    Debug.Log("Player Color");
+                    paintCapacity += 10;
+                    refillMeter.value += 10;
+                    fillImage.color = gradientImage.Evaluate(refillMeter.normalizedValue);
+                    
+                    if (paintCapacity >= 1000)
+                    {
+                        paintCapacity = 1000;
+                        return;
+                    }
+                }
+
+                // Clean up the temporary Texture2D
+                Destroy(tempTex);
+            }
+        }
+    }
+    
+    
     public void SquidModeToggle(bool squidStatus)
     {
         //Todo - Needs to adjust the camera when diving into squid mode
@@ -232,6 +304,12 @@ public class Training : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         instruction.SetActive(false);
         nextInstruction.SetActive(true);
+    }
+
+    private IEnumerator HidePipes()
+    {
+        yield return new WaitForSeconds(8f);
+        paintMarks.SetActive(false);
     }
     
     private void OnCollisionEnter(Collision other)
