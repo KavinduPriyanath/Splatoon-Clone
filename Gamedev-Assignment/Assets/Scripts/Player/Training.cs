@@ -30,12 +30,23 @@ public class Training : MonoBehaviour
 
     [SerializeField] private GameObject squidPanel1;
     private bool outofPaint;
+
+    private bool squidModeUnlocked;
+    private Camera mainCamera;
+
+    [SerializeField] private GameObject squidPrefab;
+    [SerializeField] private GameObject squidPaintDetection;
+    [SerializeField] private GameObject refillTank;
+    [SerializeField] private List<GameObject> playerGraphics;
+    public bool squidMode;
+    [SerializeField] private GameObject targetCamPosition;
     
     private void Start()
     {
         instructions[0].SetActive(true);
         canMove = false;
         _isGrounded = true;
+        mainCamera = Camera.main;
     }
 
     private void Update()
@@ -127,6 +138,14 @@ public class Training : MonoBehaviour
                 gunPickup = false;
             }
         }
+        
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            SquidModeToggle(squidMode);
+        } else if (Input.GetKeyUp(KeyCode.Q) && squidMode == true)
+        {
+            SquidModeToggle(squidMode);
+        }
     }
 
     private void Move()
@@ -180,6 +199,34 @@ public class Training : MonoBehaviour
         }
     }
     
+    public void SquidModeToggle(bool squidStatus)
+    {
+        //Todo - Needs to adjust the camera when diving into squid mode
+        if (squidStatus)
+        {
+            squidPrefab.SetActive(false);
+            refillTank.SetActive(false);
+            playerGraphics.ForEach(graphic => graphic.SetActive(true));
+            camController.minAngle = -50f;
+            camController.maxAngle = 50f;
+            mainCamera.transform.localPosition = new Vector3(0f, 1.004f, 0f);
+        }
+        else
+        {
+            squidPrefab.SetActive(true);
+            refillTank.SetActive(true);
+            playerGraphics.ForEach(graphic => graphic.SetActive(false));
+            camController.minAngle = 0f;
+            camController.maxAngle = 5f;
+            mainCamera.transform.position = Vector3.Lerp(Camera.main.transform.position,
+                targetCamPosition.transform.position, 100 * Time.deltaTime);
+            mainCamera.transform.position = targetCamPosition.transform.position;
+            
+        }
+
+        squidMode = !squidStatus;
+    }
+    
     private IEnumerator HideObjects(GameObject instruction, GameObject nextInstruction, float waitTime)
     {
         yield return new WaitForSeconds(waitTime);
@@ -200,5 +247,6 @@ public class Training : MonoBehaviour
         squidPanel1.SetActive(false);
         camController.enabled = true;
         Cursor.lockState = CursorLockMode.Locked;
+        squidModeUnlocked = true;
     }
 }
