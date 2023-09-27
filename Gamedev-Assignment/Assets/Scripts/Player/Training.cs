@@ -26,6 +26,10 @@ public class Training : MonoBehaviour
     [SerializeField] private int paintCapacity;
     [SerializeField] private ParticleSystem sprayPainter;
     private bool onShootMessage;
+    public bool ammoPicked;
+
+    [SerializeField] private GameObject squidPanel1;
+    private bool outofPaint;
     
     private void Start()
     {
@@ -35,11 +39,6 @@ public class Training : MonoBehaviour
     }
 
     private void Update()
-    {
-        EnableCamera();
-    }
-
-    private void EnableCamera()
     {
         if (instructions[0].activeSelf)
         {
@@ -69,7 +68,12 @@ public class Training : MonoBehaviour
 
         if (instructions[12].activeSelf)
         {
-            StartCoroutine(HideObjects(instructions[12], instructions[12], 2f));
+            StartCoroutine(HideObjects(instructions[12], instructions[13], 2f));
+        }
+
+        if (instructions[14].activeSelf)
+        {
+            StartCoroutine(HideObjects(instructions[14], squidPanel1, 2f));
         }
 
         if (Input.GetMouseButtonDown(0) && instructions[8].activeSelf)
@@ -85,6 +89,7 @@ public class Training : MonoBehaviour
                 instructions[11].SetActive(true);
                 canShoot = true;
                 onShootMessage = true;
+                ammoPicked = true;
             }
         }
 
@@ -138,12 +143,23 @@ public class Training : MonoBehaviour
         {
             if (onShootMessage)
             {
+                instructions[11].SetActive(false);
                 instructions[12].SetActive(true);
                 onShootMessage = false;
             }
             
             if (paintCapacity <= 0)
             {
+                instructions[13].SetActive(false);
+
+                if (!outofPaint)
+                {
+                    instructions[14].SetActive(true);
+                    outofPaint = true;
+                    camController.enabled = false;
+                    Cursor.lockState = CursorLockMode.None;
+                }
+                
                 Debug.Log("Ran out of ink");
                 return;
             }
@@ -177,5 +193,12 @@ public class Training : MonoBehaviour
         {
             _isGrounded = true;
         }
+    }
+
+    public void EnableCamera()
+    {
+        squidPanel1.SetActive(false);
+        camController.enabled = true;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 }

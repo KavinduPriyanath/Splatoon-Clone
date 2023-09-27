@@ -50,6 +50,10 @@ public class TrainingCollisionPoint : MonoBehaviour
         {
             trainScript.ammoPickup = true;
             ammoPickIntroduction.SetActive(false);
+            if (trainScript.ammoPicked == true)
+            {
+                Destroy(other.gameObject);
+            }
         }
     }
 
