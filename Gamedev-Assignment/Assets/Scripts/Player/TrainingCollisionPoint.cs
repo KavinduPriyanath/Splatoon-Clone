@@ -11,6 +11,8 @@ public class TrainingCollisionPoint : MonoBehaviour
     [SerializeField] private GameObject gunIntroInstruction;
     [SerializeField] private GameObject gunCloseIntroduction;
     [SerializeField] private GameObject gunPickupIntroduction;
+    [SerializeField] private GameObject searchAmmoIntroduction;
+    [SerializeField] private GameObject ammoPickIntroduction;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -32,6 +34,30 @@ public class TrainingCollisionPoint : MonoBehaviour
             gunPickupIntroduction.SetActive(true);
             trainScript.gunPickup = true;
             other.gameObject.SetActive(false);
+        }
+
+        if (other.gameObject.name == "Reset Point 1")
+        {
+            searchAmmoIntroduction.SetActive(false);
+        }
+
+        if (other.gameObject.name == "Ammo Pick")
+        {
+            ammoPickIntroduction.SetActive(true);
+        }
+
+        if (other.gameObject.name == "Ammo Clip")
+        {
+            trainScript.ammoPickup = true;
+            ammoPickIntroduction.SetActive(false);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.name == "Ammo Clip")
+        {
+            trainScript.ammoPickup = false;
         }
     }
 }

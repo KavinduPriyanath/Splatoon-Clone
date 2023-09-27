@@ -19,6 +19,13 @@ public class Training : MonoBehaviour
 
     public bool gunPickup;
     [SerializeField] private GameObject arms;
+
+    public bool ammoPickup;
+    private bool canShoot;
+    
+    [SerializeField] private int paintCapacity;
+    [SerializeField] private ParticleSystem sprayPainter;
+    private bool onShootMessage;
     
     private void Start()
     {
@@ -34,6 +41,11 @@ public class Training : MonoBehaviour
 
     private void EnableCamera()
     {
+        if (instructions[0].activeSelf)
+        {
+            StartCoroutine(HideObjects(instructions[0], instructions[1], 2f));
+        }
+        
         if (instructions[1].activeSelf)
         {
             camController.enabled = true;
@@ -48,6 +60,32 @@ public class Training : MonoBehaviour
         if (instructions[4].activeSelf)
         {
             StartCoroutine(HideObjects(instructions[4], instructions[5], 1f));
+        }
+
+        if (instructions[7].activeSelf)
+        {
+            StartCoroutine(HideObjects(instructions[7], instructions[8], 2f));
+        }
+
+        if (instructions[12].activeSelf)
+        {
+            StartCoroutine(HideObjects(instructions[12], instructions[12], 2f));
+        }
+
+        if (Input.GetMouseButtonDown(0) && instructions[8].activeSelf)
+        {
+            instructions[8].SetActive(false);
+            instructions[9].SetActive(true);
+        }
+
+        if (ammoPickup)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                instructions[11].SetActive(true);
+                canShoot = true;
+                onShootMessage = true;
+            }
         }
 
         if (canMove)
@@ -69,12 +107,18 @@ public class Training : MonoBehaviour
             }
         }
 
+        if (canShoot)
+        {
+            Shoot();
+        }
+
         if (gunPickup)
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
                 instructions[6].SetActive(false);
                 arms.SetActive(true);
+                instructions[7].SetActive(true);
                 gunPickup = false;
             }
         }
@@ -86,6 +130,38 @@ public class Training : MonoBehaviour
         float z = Input.GetAxis("Vertical") * movementSpeed;
 
         rb.velocity = (transform.forward * z) + (transform.right * x) + (transform.up * rb.velocity.y);
+    }
+    
+    private void Shoot()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            if (onShootMessage)
+            {
+                instructions[12].SetActive(true);
+                onShootMessage = false;
+            }
+            
+            if (paintCapacity <= 0)
+            {
+                Debug.Log("Ran out of ink");
+                return;
+            }
+            sprayPainter.Play();
+        } else if (Input.GetMouseButton(0))
+        {
+            if (paintCapacity <= 0)
+            {
+                Debug.Log("Ran out of ink");
+                return;
+            }
+            paintCapacity -= 1;
+            //refillMeter.value = paintCapacity;
+            //fillImage.color = gradientImage.Evaluate(refillMeter.normalizedValue);
+        } else if (Input.GetMouseButtonUp(0))
+        {
+            sprayPainter.Stop();
+        }
     }
     
     private IEnumerator HideObjects(GameObject instruction, GameObject nextInstruction, float waitTime)
