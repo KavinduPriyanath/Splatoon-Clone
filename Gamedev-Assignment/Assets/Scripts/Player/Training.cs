@@ -327,4 +327,6 @@ public class Training : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         squidModeUnlocked = true;
     }
+
+    
 }
