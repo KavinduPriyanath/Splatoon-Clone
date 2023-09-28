@@ -17,6 +17,9 @@ public class TrainingCollisionPoint : MonoBehaviour
     [SerializeField] private GameObject enemyPaintIntroduction;
     [SerializeField] private GameObject enemyPaintSolutionIntroduction;
     [SerializeField] private GameObject lidGlanceIntroduction;
+
+    [SerializeField] private GameObject door;
+    [SerializeField] private GameObject light;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -48,6 +51,8 @@ public class TrainingCollisionPoint : MonoBehaviour
         if (other.gameObject.name == "Ammo Pick")
         {
             ammoPickIntroduction.SetActive(true);
+            door.SetActive(true);
+            light.SetActive(true);
         }
 
         if (other.gameObject.name == "Ammo Clip")
