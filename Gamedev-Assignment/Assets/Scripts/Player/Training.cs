@@ -50,6 +50,15 @@ public class Training : MonoBehaviour
     [SerializeField] private Image fillImage;
 
     [SerializeField] private GameObject paintMarks;
+    [SerializeField] private Animator secondDoor;
+    private bool doorClosed;
+    
+    [SerializeField] private GameObject gunDummy;
+    [SerializeField] private Animator gunHolder;
+
+    public bool lidPickup;
+    public int lidCount;
+    [SerializeField] private GameObject lidIntroduction;
     
     private void Start()
     {
@@ -57,6 +66,7 @@ public class Training : MonoBehaviour
         canMove = false;
         _isGrounded = true;
         mainCamera = Camera.main;
+        doorClosed = true;
 
         StartCoroutine(HidePipes());
     }
@@ -99,10 +109,32 @@ public class Training : MonoBehaviour
             StartCoroutine(HideObjects(instructions[14], squidPanel1, 2f));
         }
 
+        /*
         if (Input.GetMouseButtonDown(0) && instructions[8].activeSelf)
         {
             instructions[8].SetActive(false);
             instructions[9].SetActive(true);
+        }*/
+        
+        if (instructions[8].activeSelf)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                instructions[8].SetActive(false);
+                instructions[9].SetActive(true);
+            }
+        }
+
+        if (instructions[9].activeSelf)
+        {
+            instructions[8].SetActive(false);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Q) && doorClosed)
+        {
+            secondDoor.SetBool("open", true);
+            instructions[15].SetActive(true);
+            doorClosed = false;
         }
 
         if (ammoPickup)
@@ -147,7 +179,21 @@ public class Training : MonoBehaviour
                 instructions[6].SetActive(false);
                 arms.SetActive(true);
                 instructions[7].SetActive(true);
+                gunDummy.SetActive(false);
+                gunHolder.SetBool("down", true);
                 gunPickup = false;
+            }
+        }
+
+        if (lidPickup)
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                lidCount = 2;
+                lidIntroduction.SetActive(true);
+                camController.enabled = false;
+                this.enabled = false;
+                Cursor.lockState = CursorLockMode.None;
             }
         }
         
@@ -204,6 +250,16 @@ public class Training : MonoBehaviour
         {
             if (paintCapacity <= 0)
             {
+                instructions[13].SetActive(false);
+
+                if (!outofPaint)
+                {
+                    instructions[14].SetActive(true);
+                    outofPaint = true;
+                    camController.enabled = false;
+                    Cursor.lockState = CursorLockMode.None;
+                }
+                
                 Debug.Log("Ran out of ink");
                 return;
             }
@@ -217,7 +273,7 @@ public class Training : MonoBehaviour
     }
     
     
-        private void SquidPaintDetection()
+    private void SquidPaintDetection()
     {
         Ray ray = new Ray(squidPaintDetection.transform.position, Vector3.down);
         RaycastHit hit;
@@ -324,6 +380,7 @@ public class Training : MonoBehaviour
     {
         squidPanel1.SetActive(false);
         camController.enabled = true;
+        this.enabled = true;
         Cursor.lockState = CursorLockMode.Locked;
         squidModeUnlocked = true;
     }

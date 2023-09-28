@@ -17,9 +17,17 @@ public class TrainingCollisionPoint : MonoBehaviour
     [SerializeField] private GameObject enemyPaintIntroduction;
     [SerializeField] private GameObject enemyPaintSolutionIntroduction;
     [SerializeField] private GameObject lidGlanceIntroduction;
-
+    [SerializeField] private GameObject canisterMessage;
+    
     [SerializeField] private GameObject door;
     [SerializeField] private GameObject light;
+
+    [SerializeField] private GameObject world;
+    [SerializeField] private Material newMat;
+    [SerializeField] private GameObject healthBar;
+    [SerializeField] private GameObject CollectableUI;
+
+
     
     private void OnTriggerEnter(Collider other)
     {
@@ -37,10 +45,12 @@ public class TrainingCollisionPoint : MonoBehaviour
 
         if (other.gameObject.name == "Gun Pickup")
         {
+
             gunCloseIntroduction.SetActive(false);
             gunPickupIntroduction.SetActive(true);
             trainScript.gunPickup = true;
             other.gameObject.SetActive(false);
+            
         }
 
         if (other.gameObject.name == "Reset Point 1")
@@ -53,6 +63,9 @@ public class TrainingCollisionPoint : MonoBehaviour
             ammoPickIntroduction.SetActive(true);
             door.SetActive(true);
             light.SetActive(true);
+            world.GetComponent<MeshRenderer>().material = newMat;
+            healthBar.SetActive(true);
+            CollectableUI.SetActive(true);
         }
 
         if (other.gameObject.name == "Ammo Clip")
@@ -68,6 +81,7 @@ public class TrainingCollisionPoint : MonoBehaviour
         if (other.gameObject.name == "Enemy Paint")
         {
             enemyPaintIntroduction.SetActive(true);
+            canisterMessage.SetActive(false);
             StartCoroutine(HideText(enemyPaintIntroduction));
         }
 
@@ -83,6 +97,11 @@ public class TrainingCollisionPoint : MonoBehaviour
         if (other.gameObject.name == "Lid Glance")
         {
             lidGlanceIntroduction.SetActive(true);
+        }
+
+        if (other.gameObject.name == "Lid Pickup")
+        {
+            trainScript.lidPickup = true;
         }
     }
 
