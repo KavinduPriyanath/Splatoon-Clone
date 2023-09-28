@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
     private GameObject currentHitObject;
 
     [SerializeField] private GameObject lowInkMessage;
+    [SerializeField] private Animator deathAnimation;
     
     private void Awake()
     {
@@ -121,6 +122,11 @@ public class PlayerController : MonoBehaviour
         if (healthPoints > 0)
         {
             healthBar.value = healthPoints;
+        } else if (healthPoints <= 0)
+        {
+            deathAnimation.enabled = true;
+            camController.enabled = false;
+            this.enabled = false;
         }
 
         if (Input.GetMouseButton(1))
