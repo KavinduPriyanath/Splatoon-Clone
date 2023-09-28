@@ -57,6 +57,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private GameObject lowInkMessage;
     [SerializeField] private Animator deathAnimation;
+    [SerializeField] private AudioSource shootSound;
+    [SerializeField] private AudioSource swimmingSound;
     
     private void Awake()
     {
@@ -140,6 +142,14 @@ public class PlayerController : MonoBehaviour
             {
                 currentHitObject.GetComponent<MeshRenderer>().enabled = false;
             }
+        }
+
+        if (squidMode)
+        {
+            swimmingSound.Play();
+        } else if (!squidMode)
+        {
+            swimmingSound.Stop();
         }
         
 
@@ -327,6 +337,7 @@ public class PlayerController : MonoBehaviour
                 return;
             }
             sprayPainter.Play();
+            shootSound.Play();
         } else if (Input.GetMouseButton(0))
         {
             if (paintCapacity <= 0)
@@ -336,6 +347,7 @@ public class PlayerController : MonoBehaviour
                 return;
             }
             paintCapacity -= 1;
+            shootSound.Play();
             refillMeter.value = paintCapacity;
             fillImage.color = gradientImage.Evaluate(refillMeter.normalizedValue);
         } else if (Input.GetMouseButtonUp(0))
