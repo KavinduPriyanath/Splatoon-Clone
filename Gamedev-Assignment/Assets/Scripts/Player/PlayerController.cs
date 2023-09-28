@@ -54,6 +54,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private GameObject crossHair;
     private GameObject currentHitObject;
+
+    [SerializeField] private GameObject lowInkMessage;
     
     private void Awake()
     {
@@ -314,6 +316,7 @@ public class PlayerController : MonoBehaviour
         {
             if (paintCapacity <= 0)
             {
+                lowInkMessage.SetActive(true);
                 Debug.Log("Ran out of ink");
                 return;
             }
@@ -322,6 +325,7 @@ public class PlayerController : MonoBehaviour
         {
             if (paintCapacity <= 0)
             {
+                lowInkMessage.SetActive(true);
                 Debug.Log("Ran out of ink");
                 return;
             }
@@ -331,6 +335,7 @@ public class PlayerController : MonoBehaviour
         } else if (Input.GetMouseButtonUp(0))
         {
             sprayPainter.Stop();
+            lowInkMessage.SetActive(false);
         }
     }
 

@@ -35,6 +35,11 @@ public class EnemyController : MonoBehaviour
     public float sightRange, attackRange;
     public bool playerInSightRange, playerInAttackRange;
 
+    [SerializeField] private GameObject enemy;
+    [SerializeField] private Animator enemyAnimation;
+    [SerializeField] private GameObject enemyWeapon;
+    [SerializeField] private ParticleSystem enemyShooting;
+    
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
@@ -59,6 +64,16 @@ public class EnemyController : MonoBehaviour
         //if (playerInAttackRange && playerInSightRange) AttackPlayer();
 
         healthSlider.value = enemyHealth;
+        if (enemyHealth <= 0)
+        {
+            //Destroy(enemy);
+            enemyAnimation.SetBool("Die", true);
+            enemyShooting.Stop();
+            Destroy(healthSlider.gameObject);
+            Destroy(enemyWeapon, 2f);
+            this.enabled = false;
+
+        }
     }
 
     private void Patroling()
