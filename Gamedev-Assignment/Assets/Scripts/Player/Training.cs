@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Training : MonoBehaviour
 {
@@ -59,6 +60,10 @@ public class Training : MonoBehaviour
     public bool lidPickup;
     public int lidCount;
     [SerializeField] private GameObject lidIntroduction;
+    
+    [SerializeField] private GameObject crossHair;
+    private GameObject currentHitObject;
+    [SerializeField] private TMP_Text lidCountText;
     
     private void Start()
     {
@@ -209,6 +214,21 @@ public class Training : MonoBehaviour
         {
             SquidPaintDetection();
         }
+        
+        if (Input.GetMouseButton(1))
+        {
+            crossHair.SetActive(true);
+            LidPlacement();
+        } else if (Input.GetMouseButtonUp(1))
+        {
+            crossHair.SetActive(false);
+            if (currentHitObject != null)
+            {
+                currentHitObject.GetComponent<MeshRenderer>().enabled = false;
+            }
+        }
+
+        lidCountText.text = lidCount.ToString();
     }
 
     private void Move()
@@ -269,6 +289,41 @@ public class Training : MonoBehaviour
         } else if (Input.GetMouseButtonUp(0))
         {
             sprayPainter.Stop();
+        }
+    }
+    
+    private void LidPlacement()
+    {
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (hit.collider.CompareTag("Placement"))
+            {
+                MeshRenderer meshRenderer = hit.collider.GetComponent<MeshRenderer>();
+                meshRenderer.enabled = true;
+                currentHitObject = hit.collider.gameObject;
+
+                if (Input.GetKeyDown(KeyCode.T) && lidCount > 0)
+                {
+                    Transform pipeObject = hit.transform.parent;
+                    GameObject pipeSpray = pipeObject.Find("Spray Point").gameObject;
+                    GameObject pipeCover = pipeObject.Find("Pipe Cover").gameObject;
+                    //Todo - play a particle effect at pipe, and effect on lid UI
+                    pipeSpray.SetActive(false);
+                    pipeCover.SetActive(true);
+                    currentHitObject.SetActive(false);
+                    lidCount -= 1;
+                }
+            }
+
+            if (currentHitObject != hit.collider.gameObject)
+            {
+                if (currentHitObject != null)
+                {
+                    currentHitObject.GetComponent<MeshRenderer>().enabled = false;
+                }
+            }
         }
     }
     
