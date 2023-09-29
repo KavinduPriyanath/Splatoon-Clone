@@ -71,10 +71,18 @@ public class Training : MonoBehaviour
     private bool panelCalled;
     
     [SerializeField] private Slider healthBar;
+    [SerializeField] private List<GameObject> gunParts;
+    [SerializeField] private GameObject ammoClip;
+
+    private bool firstInstruction;
+    [SerializeField] private GameObject paintMeterObject;
+    [SerializeField] private Slider paintMeter;
+
+    [SerializeField] private GameObject lidPickupTrigger;
     
     private void Start()
     {
-        instructions[0].SetActive(true);
+        //instructions[0].SetActive(true);
         canMove = false;
         _isGrounded = true;
         mainCamera = Camera.main;
@@ -85,17 +93,20 @@ public class Training : MonoBehaviour
 
     private void Update()
     {
-        if (instructions[0].activeSelf && !callingCoroutine)
+        if (!instructions[0].activeSelf && !firstInstruction)
         {
-            callingCoroutine = true;
-            StartCoroutine(HideObjects(instructions[0], instructions[1], 34f));
+            //callingCoroutine = true;
+            firstInstruction = true;
+            instructions[1].SetActive(true);
+            StartCoroutine(OverrideMessages(instructions[1], "Use mouse to look around"));
+            //StartCoroutine(HideObjects(instructions[0], instructions[1], 34f));
         }
         
         if (instructions[1].activeSelf && !callingCoroutine)
         {
             camController.enabled = true;
             callingCoroutine = true;
-            StartCoroutine(HideObjects(instructions[1], instructions[2], 5f));
+            StartCoroutine(HideObjects(instructions[1], instructions[2], 3f));
         }
 
         if (instructions[2].activeSelf)
@@ -106,7 +117,7 @@ public class Training : MonoBehaviour
         if (instructions[4].activeSelf && !callingCoroutine)
         {
             callingCoroutine = true;
-            StartCoroutine(HideObjects(instructions[4], instructions[5], 4f));
+            StartCoroutine(HideObjects(instructions[4], instructions[5], 2.5f));
         }
 
         if (instructions[7].activeSelf && !callingCoroutine)
@@ -170,7 +181,13 @@ public class Training : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.E))
             {
                 instructions[10].SetActive(false);
+                foreach (GameObject gunPart in gunParts)
+                {
+                    gunPart.SetActive(true);
+                }
+                ammoClip.SetActive(false);
                 instructions[11].SetActive(true);
+                paintMeterObject.SetActive(true);
                 StartCoroutine(OverrideMessages(instructions[11], "Let's try to shoot again. Press Left Mouse button again"));
                 canShoot = true;
                 onShootMessage = true;
@@ -190,9 +207,10 @@ public class Training : MonoBehaviour
             {
                 if (instructions[3].activeSelf && !jumpCalled)
                 {
-                    //instructions[3].SetActive(false);
+                    instructions[3].SetActive(false);
                     jumpCalled = true;
-                    StartCoroutine(OverrideMessages(instructions[3], "Looks like you are born for this"));
+                    instructions[18].SetActive(true);
+                    StartCoroutine(OverrideMessages(instructions[18], "Looks like you are born for this"));
                 }
                 
                 rb.AddForce(new Vector3(0,jumpForce,0), ForceMode.Impulse);
@@ -209,6 +227,7 @@ public class Training : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
+                instructions[5].SetActive(false);
                 instructions[6].SetActive(false);
                 arms.SetActive(true);
                 instructions[7].SetActive(true);
@@ -228,6 +247,7 @@ public class Training : MonoBehaviour
                 camController.enabled = false;
                 this.enabled = false;
                 Cursor.lockState = CursorLockMode.None;
+                Destroy(lidPickupTrigger);
             }
         }
         
@@ -263,6 +283,7 @@ public class Training : MonoBehaviour
             healthBar.value = healthPoints;
         }
         PaintDetection();
+        paintMeter.value = paintCapacity;
     }
 
     private void Move()
@@ -321,8 +342,9 @@ public class Training : MonoBehaviour
                 return;
             }
             paintCapacity -= 1;
-            //refillMeter.value = paintCapacity;
-            //fillImage.color = gradientImage.Evaluate(refillMeter.normalizedValue);
+            paintMeter.value = paintCapacity;
+            refillMeter.value = paintCapacity;
+            fillImage.color = gradientImage.Evaluate(refillMeter.normalizedValue);
         } else if (Input.GetMouseButtonUp(0))
         {
             sprayPainter.Stop();

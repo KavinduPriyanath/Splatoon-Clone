@@ -16,7 +16,7 @@ public class DialogueManager : MonoBehaviour
     
     private void Start()
     {
-        
+        instruction1.SetActive(true);
     }
 
     private void Update()
@@ -90,6 +90,7 @@ public class DialogueManager : MonoBehaviour
             }
             yield return new WaitForSeconds(0.1f);
         }
+        instruction.SetActive(false);
     }
 
     private void ToggleImages()

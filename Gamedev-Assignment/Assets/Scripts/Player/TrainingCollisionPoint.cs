@@ -19,6 +19,7 @@ public class TrainingCollisionPoint : MonoBehaviour
     [SerializeField] private GameObject enemyPaintSolutionIntroduction;
     [SerializeField] private GameObject lidGlanceIntroduction;
     [SerializeField] private GameObject canisterMessage;
+    [SerializeField] private GameObject onJumpDialogue;
     
     [SerializeField] private GameObject door;
     [SerializeField] private GameObject light;
@@ -27,7 +28,6 @@ public class TrainingCollisionPoint : MonoBehaviour
     [SerializeField] private Material newMat;
     [SerializeField] private GameObject healthBar;
     [SerializeField] private GameObject CollectableUI;
-
 
     
     private void OnTriggerEnter(Collider other)
@@ -42,6 +42,7 @@ public class TrainingCollisionPoint : MonoBehaviour
         if (other.gameObject.name == "Gun Intro")
         {
             jumpInstruction.SetActive(false);
+            onJumpDialogue.SetActive(false);
             //gunIntroInstruction.SetActive(true);
             StartCoroutine(StartTyping(gunIntroInstruction));
         }
@@ -73,16 +74,14 @@ public class TrainingCollisionPoint : MonoBehaviour
             world.GetComponent<MeshRenderer>().material = newMat;
             healthBar.SetActive(true);
             CollectableUI.SetActive(true);
+            Destroy(other.gameObject);
         }
 
         if (other.gameObject.name == "Ammo Clip")
         {
             trainScript.ammoPickup = true;
             //ammoPickIntroduction.SetActive(false);
-            if (trainScript.ammoPicked == true)
-            {
-                Destroy(other.gameObject);
-            }
+            
         }
 
         if (other.gameObject.name == "Enemy Paint")
@@ -90,11 +89,12 @@ public class TrainingCollisionPoint : MonoBehaviour
             enemyPaintIntroduction.SetActive(true);
             StartCoroutine(OverrideMessages(enemyPaintIntroduction, "There's something on floor"));
             canisterMessage.SetActive(false);
-            StartCoroutine(HideText(enemyPaintIntroduction));
+            //StartCoroutine(HideText(enemyPaintIntroduction));
         }
 
         if (other.gameObject.name == "Enemy Paint Solution")
         {
+            StartCoroutine(OverrideMessages(enemyPaintIntroduction, "Learn this too"));
             enemyPaintSolutionIntroduction.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
             camScript.enabled = false;
@@ -104,6 +104,7 @@ public class TrainingCollisionPoint : MonoBehaviour
 
         if (other.gameObject.name == "Lid Glance")
         {
+            enemyPaintIntroduction.SetActive(false);
             lidGlanceIntroduction.SetActive(true);
             StartCoroutine(OverrideMessages(lidGlanceIntroduction, "Something on floor, Pick it up"));
         }
