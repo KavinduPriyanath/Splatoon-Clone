@@ -7,6 +7,7 @@ using TMPro;
 using Unity.Collections;
 using Unity.Jobs;
 using System.Threading.Tasks;
+using UnityEngine.UI;
 
 public class PaintedPercentage : MonoBehaviour
 {
@@ -16,24 +17,67 @@ public class PaintedPercentage : MonoBehaviour
 
     public List<Paintable> paintSurfaces;
 
-    private Dictionary<Paintable, float> paintSurfaceDictionary = new Dictionary<Paintable, float>();
+    private Dictionary<Paintable, float> paintSurfaceDictionaryPlayer = new Dictionary<Paintable, float>();
+    private Dictionary<Paintable, float> paintSurfaceDictionaryEnemy = new Dictionary<Paintable, float>();
 
-    [SerializeField] private TMP_Text percentageText;
-
+    [SerializeField] private TMP_Text percentagePlayerText;
+    [SerializeField] private TMP_Text percentageEnemyText;
+    
     [SerializeField] private int percentage;
+
+    private float startTime;
+    private bool runThread;
+
+    [SerializeField] private Image playerTimerImage;
+    [SerializeField] private Image enemyTimerImage;
+    private float timer;
+    private float fillDuration = 5.0f;
+    private bool isFilling;
+    
     private void Start()
     {
         //Adding the list's surfaces into the dictionary
         foreach (Paintable paintSurface in paintSurfaces)
         {
-            paintSurfaceDictionary.Add(paintSurface, 0f);
+            paintSurfaceDictionaryPlayer.Add(paintSurface, 0f);
+            paintSurfaceDictionaryEnemy.Add(paintSurface, 0f);
         }
+
+        startTime = Time.time;
+        runThread = true;
+        isFilling = true;
     }
 
     private void Update()
     {
         //await Task.Run(() => CalculatePercentage());
-        CalculatePercentage();
+        if (Mathf.Abs(Time.time - startTime) > 5f)
+        {
+            CalculatePercentage();
+            startTime = Time.time;
+        }
+
+        if (isFilling)
+        {
+            isFilling = false;
+            StartCoroutine(FillImage(playerTimerImage));
+            StartCoroutine(FillImage(enemyTimerImage));
+        }
+
+    }
+
+    private IEnumerator FillImage(Image image)
+    {
+        timer = 0.0f;
+        while (timer < fillDuration)
+        {
+            float fillAmount = timer / fillDuration;
+            image.fillAmount = fillAmount;
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        isFilling = true;
 
     }
 
@@ -55,38 +99,53 @@ public class PaintedPercentage : MonoBehaviour
                 RenderTexture.active = null;
 
                 Color[] pixels = tex.GetPixels();
-                int matchingPixelCount = 0;
+                int matchingPixelCountPlayer = 0;
+                int matchingPixelCountEnemy = 0;
 
                 foreach (Color pixelColor in pixels)
                 {
                     if ((pixelColor.r >= 0.3f && pixelColor.r <= 0.4f) && (pixelColor.g >= 0.8f && pixelColor.g <= 0.9f) && (pixelColor.b >= 0.1f && pixelColor.b <= 0.2f))
                     {
-                        matchingPixelCount++;
+                        matchingPixelCountEnemy++;
                     }
                     if ((pixelColor.r >= 0.9f && pixelColor.r <= 1f) && (pixelColor.g >= 0.2f && pixelColor.g <= 0.3f) && (pixelColor.b >= 0.4f && pixelColor.b <= 0.5f))
                     {
-                        matchingPixelCount++;
+                        matchingPixelCountPlayer++;
                     }
                 }
 
-                float percentage = (float)matchingPixelCount / (float)(width * height) * 100f;
-                paintSurfaceDictionary[paintSurface] = percentage;
+                float percentagePlayer = (float)matchingPixelCountPlayer / (float)(width * height) * 100f;
+                paintSurfaceDictionaryPlayer[paintSurface] = percentagePlayer;
                 //await Task.Delay(1000);
                 //yield return new WaitForSeconds(2f);
+                
+                //for enemy painting
+                float percentageEnemy = (float)matchingPixelCountEnemy / (float)(width * height) * 100f;
+                paintSurfaceDictionaryEnemy[paintSurface] = percentageEnemy;
             }
         }
 
         
-        float total = 0f;
-        foreach (float value in paintSurfaceDictionary.Values)
+        float totalPlayer = 0f;
+        float totalEnemy = 0f;
+        foreach (float value in paintSurfaceDictionaryPlayer.Values)
         {
-            total += value;
+            totalPlayer += value;
         }
         
-        float totalPercentage = total / paintSurfaceDictionary.Count;
-        int finalPercentage = (int)Math.Ceiling(totalPercentage);
+        foreach (float value in paintSurfaceDictionaryEnemy.Values)
+        {
+            totalEnemy += value;
+        }
 
-        percentageText.text = finalPercentage + "%";
+        float totalPercentagePlayer = totalPlayer / paintSurfaceDictionaryPlayer.Count;
+        int finalPercentagePlayer = (int)Math.Ceiling(totalPercentagePlayer);
+
+        float totalPercentageEnemy = totalEnemy / paintSurfaceDictionaryEnemy.Count;
+        int finalPercentageEnemy = (int)Math.Ceiling(totalPercentageEnemy);
+        
+        percentageEnemyText.text = finalPercentageEnemy + "%";
+        percentagePlayerText.text = finalPercentagePlayer + "%";
 
     }
 }
