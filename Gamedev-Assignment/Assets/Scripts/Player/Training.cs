@@ -175,6 +175,7 @@ public class Training : MonoBehaviour
                 canShoot = true;
                 onShootMessage = true;
                 ammoPicked = true;
+                ammoPickup = false;
             }
         }
 
@@ -517,8 +518,8 @@ public class Training : MonoBehaviour
 
     private IEnumerator HidePipes()
     {
-        yield return new WaitForSeconds(8f);
-        paintMarks.SetActive(false);
+        yield return new WaitForSeconds(4f);
+        Destroy(paintMarks);
     }
     
     private void OnCollisionEnter(Collision other)
