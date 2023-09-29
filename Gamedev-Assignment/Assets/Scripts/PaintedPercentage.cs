@@ -34,6 +34,16 @@ public class PaintedPercentage : MonoBehaviour
     private float fillDuration = 5.0f;
     private bool isFilling;
     
+    [SerializeField] private TMP_Text playerPercentage;
+    [SerializeField] private TMP_Text enemyPercentage;
+    [SerializeField] private TMP_Text differenceText;
+    private int playerPercet;
+    private int enemyPercent;
+    [SerializeField] private TMP_Text preMessage;
+    [SerializeField] private TMP_Text finalMessage;
+    [SerializeField] private GameObject winButtons;
+    [SerializeField] private GameObject loseButtons;
+    
     private void Start()
     {
         //Adding the list's surfaces into the dictionary
@@ -62,6 +72,30 @@ public class PaintedPercentage : MonoBehaviour
             isFilling = false;
             StartCoroutine(FillImage(playerTimerImage));
             StartCoroutine(FillImage(enemyTimerImage));
+        }
+
+        if (GameManager.instance.gameOver)
+        {
+            playerPercentage.text = percentagePlayerText.text;
+            enemyPercentage.text = percentageEnemyText.text;
+
+            if (playerPercet > enemyPercent)
+            {
+                finalMessage.text = "Congratulations!!!";
+                preMessage.text = "You've Won";
+                winButtons.SetActive(true);
+                loseButtons.SetActive(false);
+            }
+            else
+            {
+                finalMessage.text = "Try Again";
+                preMessage.text = "You've Lost";
+                winButtons.SetActive(false);
+                loseButtons.SetActive(true);
+            }
+            
+            int difference = Mathf.Abs(playerPercet - enemyPercent);
+            differenceText.text = difference + "%";
         }
 
     }
@@ -140,9 +174,11 @@ public class PaintedPercentage : MonoBehaviour
 
         float totalPercentagePlayer = totalPlayer / paintSurfaceDictionaryPlayer.Count;
         int finalPercentagePlayer = (int)Math.Ceiling(totalPercentagePlayer);
-
+        playerPercet = finalPercentagePlayer;
+        
         float totalPercentageEnemy = totalEnemy / paintSurfaceDictionaryEnemy.Count;
         int finalPercentageEnemy = (int)Math.Ceiling(totalPercentageEnemy);
+        enemyPercent = finalPercentageEnemy;
         
         percentageEnemyText.text = finalPercentageEnemy + "%";
         percentagePlayerText.text = finalPercentagePlayer + "%";

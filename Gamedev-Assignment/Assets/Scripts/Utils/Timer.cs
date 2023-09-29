@@ -8,7 +8,7 @@ public class Timer : MonoBehaviour
     [SerializeField]
     private TMP_Text countdownText;
 
-    private float currentTime;
+    public float currentTime;
     private float initialTime = 300f; // 5 minutes in seconds
 
     private void Start()

@@ -4,12 +4,15 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager instance { get; set; }
 
     [SerializeField] private PlayerController player;
+    [SerializeField] private CameraController camera;
     [SerializeField] private CameraController cam;
     [SerializeField] private GameObject startMenu;
 
@@ -22,6 +25,10 @@ public class GameManager : MonoBehaviour
     
     private float currentTime;
     private float healthTime;
+
+    [SerializeField] private GameObject GameOverMenu;
+    [SerializeField] private Timer timer;
+    public bool gameOver;
     
     private void Awake()
     {
@@ -62,6 +69,35 @@ public class GameManager : MonoBehaviour
             Instantiate(healthPrefab, healthSpawnPoints[randomInt].position, quaternion.identity);
             healthTime = Time.time;
         }
+
+        if (player.healthPoints <= 0)
+        {
+            GameOverMenu.SetActive(true);
+            Cursor.lockState = CursorLockMode.Confined;
+            gameOver = true;
+        }
+
+        if (timer.enabled)
+        {
+            if (timer.currentTime <= 0)
+            {
+                GameOverMenu.SetActive(true);
+                Cursor.lockState = CursorLockMode.Confined;
+                gameOver = true;
+                player.enabled = false;
+                camera.enabled = false;
+            }
+        }
+    }
+
+    public void TryAgain()
+    {
+        SceneManager.LoadScene("Level 1");
+    }
+
+    public void MainMenu()
+    {
+        SceneManager.LoadScene("Main Menu");
     }
 
     private IEnumerator StartGame()
@@ -69,6 +105,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(7f);
         player.enabled = true;
         cam.enabled = true;
+        timer.enabled = true;
         startMenu.SetActive(false);
     }
 }
