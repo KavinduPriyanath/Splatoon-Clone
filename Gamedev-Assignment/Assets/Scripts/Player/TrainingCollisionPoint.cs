@@ -29,6 +29,8 @@ public class TrainingCollisionPoint : MonoBehaviour
     [SerializeField] private GameObject healthBar;
     [SerializeField] private GameObject CollectableUI;
 
+    [SerializeField] private GameObject beforeLidCloseMessage;
+    [SerializeField] private GameObject lidClosingMessage;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -122,6 +124,13 @@ public class TrainingCollisionPoint : MonoBehaviour
             trainScript.ammoPickup = false;
         }
     }
+    
+    public void LidClosingMessage()
+    {
+        beforeLidCloseMessage.SetActive(false);
+        lidClosingMessage.SetActive(true);
+        StartCoroutine(OverrideMessages(lidGlanceIntroduction, "Now close the pipes and proceed"));
+    }
 
     private IEnumerator HideText(GameObject textObject)
     {
@@ -167,4 +176,6 @@ public class TrainingCollisionPoint : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
     }
+
+    
 }

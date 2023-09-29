@@ -79,6 +79,7 @@ public class Training : MonoBehaviour
     [SerializeField] private Slider paintMeter;
 
     [SerializeField] private GameObject lidPickupTrigger;
+    [SerializeField] private GameObject lid;
     
     private void Start()
     {
@@ -248,6 +249,9 @@ public class Training : MonoBehaviour
                 this.enabled = false;
                 Cursor.lockState = CursorLockMode.None;
                 Destroy(lidPickupTrigger);
+                lid.SetActive(false);
+                instructions[18].SetActive(false);
+                StartCoroutine(OverrideMessages(instructions[19], "Looks like someone is learning something new"));
             }
         }
         
