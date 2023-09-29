@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator deathAnimation;
     [SerializeField] private AudioSource shootSound;
     [SerializeField] private AudioSource swimmingSound;
+    [SerializeField] private Slider paintMeter;
     
     private void Awake()
     {
@@ -355,6 +356,8 @@ public class PlayerController : MonoBehaviour
             sprayPainter.Stop();
             lowInkMessage.SetActive(false);
         }
+
+        paintMeter.value = paintCapacity;
     }
 
     private void LidPlacement()
