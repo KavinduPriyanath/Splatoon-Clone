@@ -60,6 +60,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioSource shootSound;
     [SerializeField] private AudioSource swimmingSound;
     [SerializeField] private Slider paintMeter;
+    [SerializeField] private GameObject paintMeterObjects;
     
     private void Awake()
     {
@@ -306,6 +307,7 @@ public class PlayerController : MonoBehaviour
         {
             squidPrefab.SetActive(false);
             refillTank.SetActive(false);
+            paintMeterObjects.SetActive(true);
             playerGraphics.ForEach(graphic => graphic.SetActive(true));
             camController.minAngle = -50f;
             camController.maxAngle = 50f;
@@ -315,6 +317,7 @@ public class PlayerController : MonoBehaviour
         {
             squidPrefab.SetActive(true);
             refillTank.SetActive(true);
+            paintMeterObjects.SetActive(false);
             playerGraphics.ForEach(graphic => graphic.SetActive(false));
             camController.minAngle = 0f;
             camController.maxAngle = 5f;
