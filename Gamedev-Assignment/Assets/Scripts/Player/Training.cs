@@ -80,7 +80,7 @@ public class Training : MonoBehaviour
     {
         if (instructions[0].activeSelf)
         {
-            StartCoroutine(HideObjects(instructions[0], instructions[1], 2f));
+            StartCoroutine(HideObjects(instructions[0], instructions[1], 50f));
         }
         
         if (instructions[1].activeSelf)
