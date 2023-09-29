@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class TrainingCollisionPoint : MonoBehaviour
 {
@@ -33,21 +34,24 @@ public class TrainingCollisionPoint : MonoBehaviour
     {
         if (other.gameObject.name == "Space Intro")
         {
-            jumpInstruction.SetActive(true);
             walkInstruction.SetActive(false);
+            StartCoroutine(StartTyping(jumpInstruction));
             trainScript.canJump = true;
         }
 
         if (other.gameObject.name == "Gun Intro")
         {
-            gunIntroInstruction.SetActive(true);
+            jumpInstruction.SetActive(false);
+            //gunIntroInstruction.SetActive(true);
+            StartCoroutine(StartTyping(gunIntroInstruction));
         }
 
         if (other.gameObject.name == "Gun Pickup")
         {
 
             gunCloseIntroduction.SetActive(false);
-            gunPickupIntroduction.SetActive(true);
+            //gunPickupIntroduction.SetActive(true);
+            StartCoroutine(StartTyping(gunPickupIntroduction));
             trainScript.gunPickup = true;
             other.gameObject.SetActive(false);
             
@@ -55,12 +59,15 @@ public class TrainingCollisionPoint : MonoBehaviour
 
         if (other.gameObject.name == "Reset Point 1")
         {
-            searchAmmoIntroduction.SetActive(false);
+            searchAmmoIntroduction.SetActive(true);
+            //StartCoroutine(StartTyping(searchAmmoIntroduction));
+            StartCoroutine(OverrideMessages(searchAmmoIntroduction, "Wow. Sky looks amazing"));
         }
 
         if (other.gameObject.name == "Ammo Pick")
         {
             ammoPickIntroduction.SetActive(true);
+            searchAmmoIntroduction.SetActive(false);
             door.SetActive(true);
             light.SetActive(true);
             world.GetComponent<MeshRenderer>().material = newMat;
@@ -124,5 +131,37 @@ public class TrainingCollisionPoint : MonoBehaviour
         camScript.enabled = true;
         trainScript.enabled = true;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    private IEnumerator StartTyping(GameObject instrucion)
+    {
+        instrucion.SetActive(true);
+        string currentText = instrucion.GetComponent<TMP_Text>().text;
+        instrucion.GetComponent<TMP_Text>().text = "";
+
+        for (int j = 0; j < currentText.Length; j++)
+        {
+ 
+            instrucion.GetComponent<TMP_Text>().text += currentText[j];
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(1.5f);
+    }
+    
+    private IEnumerator OverrideMessages(GameObject temp, string message)
+    {
+        temp.SetActive(true);
+        temp.GetComponent<TMP_Text>().text = "";
+        string currentText = message;
+
+        for (int j = 0; j < currentText.Length; j++)
+        {
+ 
+            temp.GetComponent<TMP_Text>().text += currentText[j];
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(1.5f);
     }
 }

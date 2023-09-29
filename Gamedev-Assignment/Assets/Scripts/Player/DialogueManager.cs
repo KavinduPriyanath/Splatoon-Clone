@@ -10,6 +10,9 @@ public class DialogueManager : MonoBehaviour
 
     [SerializeField] private GameObject instruction1;
     private bool trigger = true;
+
+    [SerializeField] private GameObject character1;
+    [SerializeField] private GameObject character2;
     
     private void Start()
     {
@@ -57,6 +60,7 @@ public class DialogueManager : MonoBehaviour
 
         for (int i = 0; i < instructionCount; i++)
         {
+            ToggleImages();
             GameObject temp = instruction.transform.GetChild(i).gameObject;
 
             if (temp == null)
@@ -85,6 +89,19 @@ public class DialogueManager : MonoBehaviour
                 temp.SetActive(false);
             }
             yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    private void ToggleImages()
+    {
+        if (character1.activeSelf)
+        {
+            character1.SetActive(false);
+            character2.SetActive(true);
+        } else if (character2.activeSelf)
+        {
+            character2.SetActive(false);
+            character1.SetActive(true);
         }
     }
     

@@ -64,6 +64,9 @@ public class Training : MonoBehaviour
     [SerializeField] private GameObject crossHair;
     private GameObject currentHitObject;
     [SerializeField] private TMP_Text lidCountText;
+
+    private bool callingCoroutine = false;
+    private bool jumpCalled;
     
     private void Start()
     {
@@ -78,15 +81,17 @@ public class Training : MonoBehaviour
 
     private void Update()
     {
-        if (instructions[0].activeSelf)
+        if (instructions[0].activeSelf && !callingCoroutine)
         {
-            StartCoroutine(HideObjects(instructions[0], instructions[1], 50f));
+            callingCoroutine = true;
+            StartCoroutine(HideObjects(instructions[0], instructions[1], 34f));
         }
         
-        if (instructions[1].activeSelf)
+        if (instructions[1].activeSelf && !callingCoroutine)
         {
             camController.enabled = true;
-            StartCoroutine(HideObjects(instructions[1], instructions[2], 3f));
+            callingCoroutine = true;
+            StartCoroutine(HideObjects(instructions[1], instructions[2], 5f));
         }
 
         if (instructions[2].activeSelf)
@@ -94,14 +99,16 @@ public class Training : MonoBehaviour
             canMove = true;
         }
 
-        if (instructions[4].activeSelf)
+        if (instructions[4].activeSelf && !callingCoroutine)
         {
-            StartCoroutine(HideObjects(instructions[4], instructions[5], 1f));
+            callingCoroutine = true;
+            StartCoroutine(HideObjects(instructions[4], instructions[5], 4f));
         }
 
-        if (instructions[7].activeSelf)
+        if (instructions[7].activeSelf && !callingCoroutine)
         {
-            StartCoroutine(HideObjects(instructions[7], instructions[8], 2f));
+            callingCoroutine = true;
+            StartCoroutine(HideObjects(instructions[7], instructions[8], 4f));
         }
 
         if (instructions[12].activeSelf)
@@ -127,6 +134,7 @@ public class Training : MonoBehaviour
             {
                 instructions[8].SetActive(false);
                 instructions[9].SetActive(true);
+                StartCoroutine(OverrideMessages(instructions[9], "Looks like it does not have any ammo in it. Lets search a bit"));
             }
         }
 
@@ -162,9 +170,11 @@ public class Training : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space) && _isGrounded)
             {
-                if (instructions[3].activeSelf)
+                if (instructions[3].activeSelf && !jumpCalled)
                 {
-                    instructions[3].SetActive(false);
+                    //instructions[3].SetActive(false);
+                    jumpCalled = true;
+                    StartCoroutine(OverrideMessages(instructions[3], "Looks like you are born for this"));
                 }
                 
                 rb.AddForce(new Vector3(0,jumpForce,0), ForceMode.Impulse);
@@ -184,6 +194,7 @@ public class Training : MonoBehaviour
                 instructions[6].SetActive(false);
                 arms.SetActive(true);
                 instructions[7].SetActive(true);
+                StartCoroutine(OverrideMessages(instructions[7], "Wow. This thing looks awesome."));
                 gunDummy.SetActive(false);
                 gunHolder.SetBool("down", true);
                 gunPickup = false;
@@ -415,6 +426,19 @@ public class Training : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         instruction.SetActive(false);
         nextInstruction.SetActive(true);
+        string currentText = nextInstruction.GetComponent<TMP_Text>().text;
+        nextInstruction.GetComponent<TMP_Text>().text = "";
+
+        for (int j = 0; j < currentText.Length; j++)
+        {
+ 
+            nextInstruction.GetComponent<TMP_Text>().text += currentText[j];
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(1.5f);
+        callingCoroutine = false;
+        //nextInstruction.SetActive(false);
     }
 
     private IEnumerator HidePipes()
@@ -440,5 +464,36 @@ public class Training : MonoBehaviour
         squidModeUnlocked = true;
     }
 
-    
+    private IEnumerator TypingTexts(GameObject temp)
+    {
+        temp.SetActive(true);
+        string currentText = temp.GetComponent<TMP_Text>().text;
+        temp.GetComponent<TMP_Text>().text = "";
+
+        for (int j = 0; j < currentText.Length; j++)
+        {
+ 
+            temp.GetComponent<TMP_Text>().text += currentText[j];
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(1.5f);
+        temp.SetActive(false);
+    }
+
+    private IEnumerator OverrideMessages(GameObject temp, string message)
+    {
+        temp.SetActive(true);
+        temp.GetComponent<TMP_Text>().text = "";
+        string currentText = message;
+
+        for (int j = 0; j < currentText.Length; j++)
+        {
+ 
+            temp.GetComponent<TMP_Text>().text += currentText[j];
+            yield return new WaitForSeconds(0.05f);
+        }
+
+        yield return new WaitForSeconds(1.5f);
+    }
 }
