@@ -88,6 +88,7 @@ public class TrainingCollisionPoint : MonoBehaviour
         if (other.gameObject.name == "Enemy Paint")
         {
             enemyPaintIntroduction.SetActive(true);
+            StartCoroutine(OverrideMessages(enemyPaintIntroduction, "There's something on floor"));
             canisterMessage.SetActive(false);
             StartCoroutine(HideText(enemyPaintIntroduction));
         }
@@ -104,6 +105,7 @@ public class TrainingCollisionPoint : MonoBehaviour
         if (other.gameObject.name == "Lid Glance")
         {
             lidGlanceIntroduction.SetActive(true);
+            StartCoroutine(OverrideMessages(lidGlanceIntroduction, "Something on floor, Pick it up"));
         }
 
         if (other.gameObject.name == "Lid Pickup")
