@@ -13,8 +13,10 @@ public class LidCollector : MonoBehaviour
     [SerializeField] private TMP_Text lidCountText;
     
     private bool pickable;
+    private bool collectable;
 
     private GameObject currentLid;
+    private GameObject currentHealth;
 
     private void Start()
     {
@@ -33,6 +35,14 @@ public class LidCollector : MonoBehaviour
                 pickupText.SetActive(false);
                 pickable = false;
             }
+
+            if (collectable)
+            {
+                player.healthPoints += 15;
+                pickupText.SetActive(false);
+                Destroy(currentHealth);
+                collectable = false;
+            }
         }
 
         lidCountText.text = player.lidCount.ToString();
@@ -46,6 +56,13 @@ public class LidCollector : MonoBehaviour
             pickable = true;
             currentLid = other.gameObject;
         }
+
+        if (other.gameObject.CompareTag("Health"))
+        {
+            pickupText.SetActive(true);
+            collectable = true;
+            currentHealth = other.gameObject;
+        }
     }
 
     private void OnTriggerExit(Collider other)
@@ -55,6 +72,13 @@ public class LidCollector : MonoBehaviour
             pickupText.SetActive(false);
             pickable = false;
             currentLid = null;
+        }
+        
+        if (other.gameObject.CompareTag("Health"))
+        {
+            pickupText.SetActive(false);
+            collectable = false;
+            currentHealth = null;
         }
     }
 }

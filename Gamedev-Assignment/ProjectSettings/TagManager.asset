@@ -9,6 +9,7 @@ TagManager:
   - Enemy
   - Collectable
   - Placement
+  - Health
   layers:
   - Default
   - TransparentFX

@@ -6,7 +6,12 @@ using UnityEngine;
 public class BillboardEffect : MonoBehaviour
 {
 
-    [SerializeField] private Transform cam;
+    private Transform cam;
+
+    private void Start()
+    {
+        cam = Camera.main.transform;
+    }
 
     private void LateUpdate()
     {

@@ -69,6 +69,7 @@ public class EnemyController : MonoBehaviour
             //Destroy(enemy);
             enemyAnimation.SetBool("Die", true);
             enemyShooting.Stop();
+            GameManager.instance.enemyCount -= 1;
             Destroy(healthSlider.gameObject);
             Destroy(enemyWeapon, 2f);
             this.enabled = false;
