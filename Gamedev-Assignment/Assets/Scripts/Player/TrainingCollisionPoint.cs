@@ -78,7 +78,7 @@ public class TrainingCollisionPoint : MonoBehaviour
         if (other.gameObject.name == "Ammo Clip")
         {
             trainScript.ammoPickup = true;
-            ammoPickIntroduction.SetActive(false);
+            //ammoPickIntroduction.SetActive(false);
             if (trainScript.ammoPicked == true)
             {
                 Destroy(other.gameObject);

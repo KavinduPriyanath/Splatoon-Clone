@@ -67,6 +67,7 @@ public class Training : MonoBehaviour
 
     private bool callingCoroutine = false;
     private bool jumpCalled;
+    private bool panelCalled;
     
     private void Start()
     {
@@ -111,14 +112,23 @@ public class Training : MonoBehaviour
             StartCoroutine(HideObjects(instructions[7], instructions[8], 4f));
         }
 
-        if (instructions[12].activeSelf)
+        if (instructions[12].activeSelf && !callingCoroutine)
         {
-            StartCoroutine(HideObjects(instructions[12], instructions[13], 2f));
+            callingCoroutine = true;
+            StartCoroutine(HideObjects(instructions[12], instructions[13], 4f));
         }
 
         if (instructions[14].activeSelf)
         {
-            StartCoroutine(HideObjects(instructions[14], squidPanel1, 2f));
+            StartCoroutine(HideObjects(instructions[14], squidPanel1, 3f));
+            Cursor.lockState = CursorLockMode.None;
+        }
+
+        if (squidPanel1.activeSelf && !panelCalled)
+        {
+            instructions[16].SetActive(true);
+            panelCalled = true;
+            StartCoroutine(OverrideMessages(instructions[16], "Lets learn bit about refilling"));
         }
 
         /*
@@ -154,7 +164,9 @@ public class Training : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
+                instructions[10].SetActive(false);
                 instructions[11].SetActive(true);
+                StartCoroutine(OverrideMessages(instructions[11], "Let's try to shoot again. Press Left Mouse button again"));
                 canShoot = true;
                 onShootMessage = true;
                 ammoPicked = true;
@@ -258,6 +270,7 @@ public class Training : MonoBehaviour
             {
                 instructions[11].SetActive(false);
                 instructions[12].SetActive(true);
+                StartCoroutine(OverrideMessages(instructions[12], "wow. Its a paint gun so cool"));
                 onShootMessage = false;
             }
             
@@ -268,9 +281,10 @@ public class Training : MonoBehaviour
                 if (!outofPaint)
                 {
                     instructions[14].SetActive(true);
+                    StartCoroutine(OverrideMessages(instructions[14], "Looks like you are out of paint"));
                     outofPaint = true;
                     camController.enabled = false;
-                    Cursor.lockState = CursorLockMode.None;
+                    //Cursor.lockState = CursorLockMode.None;
                 }
                 
                 Debug.Log("Ran out of ink");
@@ -286,6 +300,7 @@ public class Training : MonoBehaviour
                 if (!outofPaint)
                 {
                     instructions[14].SetActive(true);
+                    StartCoroutine(OverrideMessages(instructions[14], "Looks like you are out of paint"));
                     outofPaint = true;
                     camController.enabled = false;
                     Cursor.lockState = CursorLockMode.None;
@@ -426,19 +441,26 @@ public class Training : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
         instruction.SetActive(false);
         nextInstruction.SetActive(true);
-        string currentText = nextInstruction.GetComponent<TMP_Text>().text;
-        nextInstruction.GetComponent<TMP_Text>().text = "";
 
-        for (int j = 0; j < currentText.Length; j++)
+        if (nextInstruction.GetComponent<TMP_Text>() != null)
         {
- 
-            nextInstruction.GetComponent<TMP_Text>().text += currentText[j];
-            yield return new WaitForSeconds(0.05f);
-        }
+            string currentText = nextInstruction.GetComponent<TMP_Text>().text;
+            nextInstruction.GetComponent<TMP_Text>().text = "";
 
-        yield return new WaitForSeconds(1.5f);
+            for (int j = 0; j < currentText.Length; j++)
+            {
+ 
+                nextInstruction.GetComponent<TMP_Text>().text += currentText[j];
+                yield return new WaitForSeconds(0.05f);
+            }
+
+            yield return new WaitForSeconds(1.5f);
+            //nextInstruction.SetActive(false);
+        }
         callingCoroutine = false;
-        //nextInstruction.SetActive(false);
+
+        
+        
     }
 
     private IEnumerator HidePipes()
@@ -462,6 +484,9 @@ public class Training : MonoBehaviour
         this.enabled = true;
         Cursor.lockState = CursorLockMode.Locked;
         squidModeUnlocked = true;
+        instructions[16].SetActive(false);
+        instructions[17].SetActive(true);
+        StartCoroutine(OverrideMessages(instructions[17], "Less go squidsss"));
     }
 
     private IEnumerator TypingTexts(GameObject temp)
