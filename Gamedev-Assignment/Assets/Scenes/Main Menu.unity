@@ -104910,6 +104910,7 @@ MonoBehaviour:
   greenParticles: {fileID: 792228297}
   pinkParticles: {fileID: 541187918}
   orangeParticles: {fileID: 1820442777}
+  blueAnim: {fileID: 1684289952}
   yellowAnim: {fileID: 515764184}
   greenAnim: {fileID: 792228295}
   pinkAnim: {fileID: 541187916}

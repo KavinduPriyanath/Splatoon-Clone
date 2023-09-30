@@ -18,10 +18,13 @@ public class MainMenu : MonoBehaviour
     private bool pink;
     private bool orange;
 
+    [SerializeField] private Animator blueAnim;
     [SerializeField] private Animator yellowAnim;
     [SerializeField] private Animator greenAnim;
     [SerializeField] private Animator pinkAnim;
     [SerializeField] private Animator orangeAnim;
+
+    private int currentAnimation = 0;
     
     private void Start()
     {
@@ -30,6 +33,42 @@ public class MainMenu : MonoBehaviour
 
     private void Update()
     {
+        //Checks whether the animation has completed playing, and if so stop the related particle system 
+        if (currentAnimation == 0 && blueAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        {
+            //blueAnim.gameObject.SetActive(false);
+            blueParticles.Stop();
+            currentAnimation++;
+        }
+        
+        if (currentAnimation == 1 && yellowAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        {
+            //blueAnim.gameObject.SetActive(false);
+            yellowParticles.Stop();
+            currentAnimation++;
+        }
+        
+        if (currentAnimation == 2 && greenAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        {
+            //blueAnim.gameObject.SetActive(false);
+            greenParticles.Stop();
+            currentAnimation++;
+        }
+        
+        if (currentAnimation == 3 && pinkAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        {
+            //blueAnim.gameObject.SetActive(false);
+            pinkParticles.Stop();
+            currentAnimation++;
+        }
+        
+        if (currentAnimation == 4 && orangeAnim.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1f)
+        {
+            //blueAnim.gameObject.SetActive(false);
+            orangeParticles.Stop();
+            currentAnimation++;
+        }
+        
         if (!yellow && Time.time > 5f)
         {
             yellowAnim.SetBool("yellow", true);
