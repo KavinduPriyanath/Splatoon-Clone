@@ -31,6 +31,8 @@ public class TrainingCollisionPoint : MonoBehaviour
 
     [SerializeField] private GameObject beforeLidCloseMessage;
     [SerializeField] private GameObject lidClosingMessage;
+
+    [SerializeField] private Animator endDoor;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -114,6 +116,11 @@ public class TrainingCollisionPoint : MonoBehaviour
         if (other.gameObject.name == "Lid Pickup")
         {
             trainScript.lidPickup = true;
+        }
+
+        if (other.gameObject.name == "Level End")
+        {
+            endDoor.SetBool("upclose", true);
         }
     }
 
