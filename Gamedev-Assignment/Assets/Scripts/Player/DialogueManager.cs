@@ -7,12 +7,19 @@ using TMPro;
 public class DialogueManager : MonoBehaviour
 {
     [SerializeField] private float typingSpeed;
-
+    [SerializeField] private GameObject dialogueBox;
     [SerializeField] private GameObject instruction1;
+    [SerializeField] private GameObject instructionN;
     private bool trigger = true;
 
     [SerializeField] private GameObject character1;
     [SerializeField] private GameObject character2;
+
+    public bool levelEndMessage;
+    public bool levelEnd;
+
+    [SerializeField] private GameObject portal;
+    [SerializeField] private GameObject randomMessage;
     
     private void Start()
     {
@@ -25,6 +32,23 @@ public class DialogueManager : MonoBehaviour
         {
             trigger = false;
             StartCoroutine(TypingInstructions(instruction1));
+        }
+
+        if (levelEndMessage)
+        {
+            levelEndMessage = false;
+            StartCoroutine(TypingInstructions(instructionN));
+        }
+
+        if (randomMessage.activeSelf)
+        {
+            levelEnd = true;
+        }
+
+        if (!instructionN.activeSelf && levelEnd)
+        {
+            dialogueBox.SetActive(false);
+            portal.SetActive(true);
         }
     }
 
@@ -46,7 +70,6 @@ public class DialogueManager : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
         currentText.gameObject.SetActive(false);
-        
     }
 
     private IEnumerator TypingInstructions(GameObject instruction)

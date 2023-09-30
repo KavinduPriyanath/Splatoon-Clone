@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class Training : MonoBehaviour
 {
@@ -80,6 +81,8 @@ public class Training : MonoBehaviour
 
     [SerializeField] private GameObject lidPickupTrigger;
     [SerializeField] private GameObject lid;
+
+    public bool teleport;
     
     private void Start()
     {
@@ -286,6 +289,15 @@ public class Training : MonoBehaviour
         {
             healthBar.value = healthPoints;
         }
+
+        if (teleport)
+        {
+            if (Input.GetKeyDown(KeyCode.Z))
+            {
+                SceneManager.LoadScene("Level 2");
+            }
+        }
+        
         PaintDetection();
         paintMeter.value = paintCapacity;
     }

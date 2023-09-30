@@ -33,6 +33,10 @@ public class TrainingCollisionPoint : MonoBehaviour
     [SerializeField] private GameObject lidClosingMessage;
 
     [SerializeField] private Animator endDoor;
+    [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private GameObject instructionN;
+
+    [SerializeField] private GameObject teleportMsg;
     
     private void OnTriggerEnter(Collider other)
     {
@@ -120,7 +124,17 @@ public class TrainingCollisionPoint : MonoBehaviour
 
         if (other.gameObject.name == "Level End")
         {
+            lidClosingMessage.SetActive(false);
+            lidGlanceIntroduction.SetActive(false);
+            instructionN.SetActive(true);
             endDoor.SetBool("upclose", true);
+            dialogueManager.levelEndMessage = true;
+        }
+
+        if (other.gameObject.name == "Portal")
+        {
+            teleportMsg.SetActive(true);
+            trainScript.teleport = true;
         }
     }
 

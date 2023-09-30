@@ -74,7 +74,7 @@ public class PaintedPercentage : MonoBehaviour
             StartCoroutine(FillImage(enemyTimerImage));
         }
 
-        if (GameManager.instance.gameOver)
+        if (GameManager.managerInstance.gameOver)
         {
             playerPercentage.text = percentagePlayerText.text;
             enemyPercentage.text = percentageEnemyText.text;

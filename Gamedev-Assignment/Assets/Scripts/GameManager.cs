@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager instance { get; set; }
+    public static GameManager managerInstance { get; set; }
 
     [SerializeField] private PlayerController player;
     [SerializeField] private CameraController camera;
@@ -32,13 +32,13 @@ public class GameManager : MonoBehaviour
     
     private void Awake()
     {
-        if (instance != null)
+        if (managerInstance != null)
         {
             Debug.Log("Already has one");
             Destroy(gameObject);
-        } else if (instance == null)
+        } else if (managerInstance == null)
         {
-            instance = this;
+            managerInstance = this;
         }
     }
 
